@@ -40,7 +40,7 @@ function move(){
 		start = new Date();
 		
 		date.setMonth(date.getMonth());
-		date.setHours(date.getHours()-2);
+		date.setHours(date.getHours()-1);
 	    date.setMinutes(0);
 	    date.setSeconds(0);
 	    date.setMilliseconds(0);
@@ -61,7 +61,7 @@ function move(){
 		        .upsert()
 		        .update(
 		        {
-		            $set: {date:doc.date, data:doc.data}
+		            $set: {tag:doc.tag, date:doc.date, var:doc.var, data:doc.data}
 		        });
 				
 				counter ++;
@@ -75,6 +75,10 @@ function move(){
 					finish = new Date();
 				    time = ((finish.getTime() - start.getTime()) / 1000);
 				    console.log('Finished moving '+count+' documents to "past" collection in ',(finish.getTime() - start.getTime())/1000+'s');
+				    console.log('Deletion process started.');
+				    db.collection('current').deleteMany({date:{$lte: date}}, function(){
+					    console.log('Finished deleting files.');
+				    });
 				}
 			});
 	    });
