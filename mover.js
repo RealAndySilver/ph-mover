@@ -74,10 +74,15 @@ function move(){
 				if(counter == count){
 					finish = new Date();
 				    time = ((finish.getTime() - start.getTime()) / 1000);
-				    console.log('Finished moving '+count+' documents to "past" collection in ',(finish.getTime() - start.getTime())/1000+'s');
-				    console.log('Deletion process started.');
+				    console.log('Finished moving '+count+' documents from "current" to "past" collection in ',(finish.getTime() - start.getTime())/1000+'s');
+				    console.log('Deletion process started for documents in "current" older than 1 hour.');
 				    db.collection('current').deleteMany({date:{$lte: date}}, function(){
-					    console.log('Finished deleting files.');
+					    console.log('Finished deleting files from current.');
+					    date.setHours(date.getHours()-47);
+					    console.log('Deletion process started for documents in "past" older than 48 hours.');
+					    db.collection('past').deleteMany({date:{$lte: date}}, function(){
+						    console.log('Finished deleting files from "past".');
+					    });
 				    });
 				}
 			});
